@@ -1,8 +1,8 @@
 package com.fepelus.searchzen.commandline;
 
-import com.fepelus.searchzen.contracts.FileNotFoundException;
-import com.fepelus.searchzen.contracts.SearchQuery;
-import com.fepelus.searchzen.contracts.Streams;
+import com.fepelus.searchzen.storage.FileNotFoundException;
+import com.fepelus.searchzen.storage.SearchQuery;
+import com.fepelus.searchzen.storage.Streams;
 
 import java.io.ByteArrayInputStream;
 import java.io.File;
@@ -65,6 +65,11 @@ public class UserInput implements Streams, SearchQuery {
         return searchTerm;
     }
 
+    /** The <code>InputStream</code> of the organizations.json file.
+     *
+     * @return The <code>InputStream</code> of the content of the organizations.json file.
+     * @throws FileNotFoundException if the user has configured a directory that does not have an organizations.json file in it
+     */
     @Override
     public InputStream organizationsJsonStream() throws FileNotFoundException {
         if (!includeOrganizations) {
@@ -74,6 +79,11 @@ public class UserInput implements Streams, SearchQuery {
         return streamSource.getStream("organizations.json");
     }
 
+    /** The <code>InputStream</code> of the tickets.json file.
+     *
+     * @return The <code>InputStream</code> of the content of the tickets.json file.
+     * @throws FileNotFoundException if the user has configured a directory that does not have an tickets.json file in it
+     */
     @Override
     public InputStream ticketsJsonStream() throws FileNotFoundException {
         if (!includeTickets) {
@@ -82,6 +92,11 @@ public class UserInput implements Streams, SearchQuery {
         return streamSource.getStream("tickets.json");
     }
 
+    /** The <code>InputStream</code> of the users.json file.
+     *
+     * @return The <code>InputStream</code> of the content of the users.json file.
+     * @throws FileNotFoundException if the user has configured a directory that does not have an users.json file in it
+     */
     @Override
     public InputStream usersJsonStream() throws FileNotFoundException {
         if (!includeUsers) {
@@ -106,10 +121,21 @@ public class UserInput implements Streams, SearchQuery {
         return !(includeOrganizations || includeTickets || includeUsers);
     }
 
+    /** The search term is going to be matched on all attributes
+     *
+     * @return <code>false</code> if the user has specified that the search is to be matched only on certain, specified attributes, <code>true</code> otherwise
+     */
     public boolean searchAllAttributes() {
         return ! this.attributes.isPresent();
     }
 
+    /** List of the attributes that the search term is going to be matched against
+     *
+     * If this list is not empty, then no entity will be included in the <code>SearchResults</code>
+     * unless the <code>searchTerm</code> matches one of the attributes in this list.
+     *
+     * @return List of the attributes that the search term is going to be matched against.
+     */
     public List<String> limitToAttributes() {
         return this.attributes.orElse(Arrays.asList());
     }
@@ -120,6 +146,9 @@ interface StreamSource {
     InputStream getStream(String filename) throws FileNotFoundException;
 }
 
+/** Get the <code>InputStream</code>s from the files hard-coded in the jar file
+ *
+ */
 class ResourcesSource implements StreamSource {
 
     @Override
@@ -128,6 +157,9 @@ class ResourcesSource implements StreamSource {
     }
 }
 
+/** Get the <code>InputStream</code>s from the directory specified by the user
+ *
+ */
 class DirectorySource implements StreamSource {
     private final String directory;
 
@@ -143,6 +175,5 @@ class DirectorySource implements StreamSource {
         } catch (java.io.FileNotFoundException e) {
             throw new FileNotFoundException("Could not load the file " + filename, e);
         }
-
     }
 }

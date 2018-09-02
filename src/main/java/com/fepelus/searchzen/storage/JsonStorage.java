@@ -1,45 +1,53 @@
 package com.fepelus.searchzen.storage;
 
-import com.fepelus.searchzen.contracts.*;
+import com.fepelus.searchzen.format.Storage;
 import com.fepelus.searchzen.search.SearchResults;
 
 import java.util.Optional;
 
-public class JsonStorage implements Storage, Searchable {
+/** Collects the lists of users, tickets and organizations.
+ *
+ */
+public class JsonStorage implements Storage {
 
-    private final Streams config;
     Users users;
     Tickets tickets;
     Organizations organizations;
 
-    public JsonStorage(Streams config)  {
-        this.config = config;
+    JsonStorage(Users users, Tickets tickets, Organizations organizations) {
+        this.users = users;
+        this.tickets = tickets;
+        this.organizations = organizations;
     }
 
-    public JsonStorage load() throws JsonParsingException, FileNotFoundException {
-            users = new JsonUsers(config.usersJsonStream());
-            tickets = new JsonTickets(config.ticketsJsonStream());
-            organizations = new JsonOrganizations(config.organizationsJsonStream());
-            return this;
-    }
-
-
-
-    @Override
+    /** Search all the three different entity types
+     *
+     * @return SearchResults object that holds the entities that match the query
+     */
     public SearchResults search(SearchQuery query) {
-        var output = new SearchResults();
-        output.matchingOrganizations(organizations.search(query));
-        output.matchingTickets(tickets.search(query));
-        output.matchingUsers(users.search(query));
-        return output;
+        return new SearchResults(
+            organizations.search(query),
+            tickets.search(query),
+            users.search(query)
+        );
     }
 
 
+    /** Get organization by id
+     *
+     * @param organizationId
+     * @return optional of the Organization with the given ID or Optional.empty if there is none
+     */
     @Override
     public Optional<Organization> getOrganizationById(long organizationId) {
         return organizations.getById(organizationId);
     }
 
+    /** Get user by id
+     *
+     * @param userId
+     * @return optional of the User with the given ID or Optional.empty if there is none
+     */
     @Override
     public Optional<User> getUserById(long userId) {
         return users.getById(userId);

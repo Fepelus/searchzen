@@ -1,6 +1,6 @@
 package com.fepelus.searchzen.commandline;
 
-import com.fepelus.searchzen.contracts.FileNotFoundException;
+import com.fepelus.searchzen.storage.FileNotFoundException;
 import com.google.common.io.Resources;
 import org.junit.jupiter.api.Test;
 

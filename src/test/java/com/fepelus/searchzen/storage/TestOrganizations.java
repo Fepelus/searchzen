@@ -1,6 +1,5 @@
 package com.fepelus.searchzen.storage;
 
-import com.fepelus.searchzen.contracts.Organizations;
 import com.google.common.io.Resources;
 import org.junit.jupiter.api.Test;
 
@@ -14,33 +13,33 @@ import static org.junit.jupiter.api.Assertions.*;
 class TestOrganizations {
     @Test
     void shouldProvideorganizations() throws JsonParsingException {
-        Organizations provider = new JsonOrganizations("[]");
+        Organizations provider = new Organizations("[]");
         assertEquals(0, provider.getAll().size());
     }
 
     @Test
     void shouldParseOneorganization() throws JsonParsingException {
-        Organizations provider = new JsonOrganizations(oneOrganizationJson);
+        Organizations provider = new Organizations(oneOrganizationJson);
         assertEquals(1, provider.getAll().size());
     }
 
     @Test
     void shouldAcceptInputStream() throws IOException, JsonParsingException {
-        Organizations provider = new JsonOrganizations(new ByteArrayInputStream(oneOrganizationJson.getBytes("UTF-8")));
+        Organizations provider = new Organizations(new ByteArrayInputStream(oneOrganizationJson.getBytes("UTF-8")));
         assertEquals(1, provider.getAll().size());
     }
 
     @Test
     void shouldAcceptStreamOfResourceFile() throws IOException, JsonParsingException {
         InputStream stream = Resources.getResource("organizations.json").openStream();
-        Organizations provider = new JsonOrganizations(stream);
+        Organizations provider = new Organizations(stream);
         assertEquals(25, provider.getAll().size());
     }
 
     @Test
     void shouldRetrieveOrganizationById() throws JsonParsingException {
         // Given a list of one organization
-        Organizations provider = new JsonOrganizations(oneOrganizationJson);
+        Organizations provider = new Organizations(oneOrganizationJson);
 
         // When I get the organization by her ID
         Optional<Organization> optionalOrganization = provider.getById(101);
@@ -55,7 +54,7 @@ class TestOrganizations {
     @Test
     void shouldNotRetrieveIfIdIsNotPresent() throws JsonParsingException {
         // Given a list of one organization
-        Organizations provider = new JsonOrganizations(oneOrganizationJson);
+        Organizations provider = new Organizations(oneOrganizationJson);
 
         // When I query for an ID that is not present in the data
         Optional<Organization> optionalOrganization = provider.getById(99);
@@ -68,7 +67,7 @@ class TestOrganizations {
     void shouldRetrieveADifferentOrganization() throws IOException, JsonParsingException {
         // Given 25 different organization
         InputStream stream = Resources.getResource("organizations.json").openStream();
-        Organizations provider = new JsonOrganizations(stream);
+        Organizations provider = new Organizations(stream);
 
         // When I select organization with ID 102
         Optional<Organization> optionalOrganization = provider.getById(102);
@@ -104,7 +103,7 @@ class TestOrganizations {
                 "      \"Farley\"\n" +
                 "    ]\n" +
                 "  }]";
-        assertThrows(JsonParsingException.class, () -> new JsonOrganizations(badJson));
+        assertThrows(JsonParsingException.class, () -> new Organizations(badJson));
     }
 
 

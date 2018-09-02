@@ -1,11 +1,12 @@
 package com.fepelus.searchzen.format;
 
-import com.fepelus.searchzen.contracts.Storage;
 import com.fepelus.searchzen.search.SearchResults;
 
-import java.util.Arrays;
 import java.util.stream.Collectors;
 
+/** Generate the output string from the search results
+ *
+ */
 public class Format {
     private Storage storage;
 

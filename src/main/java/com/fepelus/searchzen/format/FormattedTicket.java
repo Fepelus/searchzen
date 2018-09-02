@@ -1,16 +1,12 @@
 package com.fepelus.searchzen.format;
 
-import com.fepelus.searchzen.contracts.Storage;
 import com.fepelus.searchzen.storage.Ticket;
-
-import java.util.Arrays;
-import java.util.stream.Collectors;
 
 class FormattedTicket {
     private final Ticket ticket;
     private final Storage storage;
 
-    public FormattedTicket(Ticket ticket, Storage storage) {
+    FormattedTicket(Ticket ticket, Storage storage) {
         this.ticket = ticket;
         this.storage = storage;
     }

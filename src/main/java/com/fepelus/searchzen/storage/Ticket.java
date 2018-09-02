@@ -2,7 +2,6 @@ package com.fepelus.searchzen.storage;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import com.fepelus.searchzen.contracts.SearchQuery;
 
 import java.util.*;
 
@@ -22,7 +21,7 @@ public class Ticket {
     private Map<String, Set<String>> allSetAttributes = new HashMap<>();
 
     @JsonCreator
-    public Ticket(@JsonProperty("_id") String id, String url, String external_id, String created_at, String type,
+    Ticket(@JsonProperty("_id") String id, String url, String external_id, String created_at, String type,
                   String subject, String description, String priority, String status, long submitter_id,
                   long assignee_id, long organization_id, Set<String> tags, String has_incidents, String due_at,
                   String via) {
@@ -54,7 +53,7 @@ public class Ticket {
         allSetAttributes.put("tags", tags);
     }
 
-    public boolean matches(SearchQuery query) {
+    boolean matches(SearchQuery query) {
         if (!lookupValues.contains(query.searchTerm())) {
             return false;
         }
@@ -67,6 +66,10 @@ public class Ticket {
 
         // but it may not match the attribute that we now know is specified
 
+        return matchesByAttribute(query);
+    }
+
+    private boolean matchesByAttribute(SearchQuery query) {
         return query.limitToAttributes().stream()
                 .anyMatch(attribute -> {
                     String stringValue = allStringAttributes.get(attribute);

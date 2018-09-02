@@ -1,6 +1,6 @@
 package com.fepelus.searchzen.storage;
 
-import com.fepelus.searchzen.contracts.Storage;
+import com.fepelus.searchzen.format.Storage;
 import com.fepelus.searchzen.format.Format;
 import com.fepelus.searchzen.search.SearchResults;
 import com.google.common.collect.Sets;
@@ -92,63 +92,94 @@ class TestFormat {
 
     @Test
     void shouldDisplaySearchResultForOrganization() {
-        SearchResults results = new SearchResults();
-        results.matchingOrganizations(Arrays.asList(ORGANIZATION));
-        results.matchingTickets(Arrays.asList());
-        results.matchingUsers(Arrays.asList());
-        Storage storage = new FakeStorage();
-        Format format = new Format(storage);
+        SearchResults results = new SearchResults(
+            Arrays.asList(ORGANIZATION),
+            Arrays.asList(),
+            Arrays.asList()
+        );
+        Format format = new Format(new FakeStorage());
         assertEquals(FORMATTED_ORGANIZATION, format.format(results));
     }
 
 
     @Test
     void shouldDisplaySearchResultForUser() {
-        SearchResults results = new SearchResults();
-        results.matchingOrganizations(Arrays.asList());
-        results.matchingTickets(Arrays.asList());
-        results.matchingUsers(Arrays.asList(USER));
-        Storage storage = new FakeStorage();
-        Format format = new Format(storage);
+        SearchResults results = new SearchResults(
+                Arrays.asList(),
+                Arrays.asList(),
+                Arrays.asList(USER)
+        );
+        Format format = new Format(new FakeStorage());
         assertEquals(FORMATTED_USER, format.format(results));
     }
 
 
     @Test
     void shouldDisplaySearchResultForTicket() {
-        SearchResults results = new SearchResults();
-        results.matchingOrganizations(Arrays.asList());
-        results.matchingTickets(Arrays.asList(TICKET));
-        results.matchingUsers(Arrays.asList());
-        Storage storage = new FakeStorage();
-        Format format = new Format(storage);
+        SearchResults results = new SearchResults(
+                Arrays.asList(),
+                Arrays.asList(TICKET),
+                Arrays.asList()
+        );
+        Format format = new Format(new FakeStorage());
         assertEquals(FORMATTED_TICKET, format.format(results));
     }
 
     @Test
     void shouldDisplaySearchResultForTicketAndOrganisation() {
-        SearchResults results = new SearchResults();
-        results.matchingOrganizations(Arrays.asList(ORGANIZATION));
-        results.matchingTickets(Arrays.asList(TICKET, TICKET));
-        results.matchingUsers(Arrays.asList(USER));
-        Storage storage = new FakeStorage();
-        Format format = new Format(storage);
+        SearchResults results = new SearchResults(
+                Arrays.asList(ORGANIZATION),
+                Arrays.asList(TICKET, TICKET),
+                Arrays.asList(USER)
+        );
+        Format format = new Format(new FakeStorage());
         assertEquals(FORMATTED_ORGANIZATION + "\n\n" + FORMATTED_USER + "\n\n" + FORMATTED_TICKET + "\n\n" + FORMATTED_TICKET, format.format(results));
     }
 
+    @Test
+    void shouldHandleLinkingToIDsThatAreNotInStorage() {
+        Storage missingFake = new FakeStorage(){
+            @Override public Optional<Organization> getOrganizationById(long organizationId) {
+                return Optional.empty();
+            }
+        };
+        SearchResults results = new SearchResults(
+                Arrays.asList(),
+                Arrays.asList(),
+                Arrays.asList(USER)
+        );
+        Format format = new Format(missingFake);
 
+        String userWithoutOrganisation = "_id: 75\n" +
+                "url: http://initech.zendesk.com/api/v2/users/75.json\n" +
+                "external_id: 0db0c1da-8901-4dc3-a469-fe4b500d0fca\n" +
+                "name: Catalina Simpson\n" +
+                "alias: Miss Rosanna\n" +
+                "created_at: 2016-06-07T09:18:00 -10:00\n" +
+                "active: false\n" +
+                "verified: true\n" +
+                "shared: true\n" +
+                "locale: zh-CN\n" +
+                "timezone: US Minor Outlying Islands\n" +
+                "last_login_at: 2012-10-15T12:36:41 -11:00\n" +
+                "email: rosannasimpson@flotonic.com\n" +
+                "phone: 8615-883-099\n" +
+                "signature: Don't Worry Be Happy!\n" +
+                "organisation: \n" + // NO ORGANISATION
+                "suspended: true\n" +
+                "role: agent\n" +
+                "tags: [Beaulieu, Veguita, Elizaville, Navarre]";
+        assertEquals(userWithoutOrganisation, format.format(results));
+
+    }
 
     class FakeStorage implements Storage {
-
-    @Override
-    public Optional<Organization> getOrganizationById(long organizationId) {
-        return Optional.of(ORGANIZATION);
+        @Override public Optional<Organization> getOrganizationById(long organizationId) {
+            return Optional.of(ORGANIZATION);
+        }
+        @Override public Optional<User> getUserById(long userId) {
+            return Optional.of(USER);
+        }
     }
-
-    @Override
-    public Optional<User> getUserById(long userId) {
-        return Optional.of(USER);
-    }
-}
 
 }

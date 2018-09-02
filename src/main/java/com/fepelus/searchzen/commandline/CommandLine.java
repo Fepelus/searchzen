@@ -2,7 +2,8 @@ package com.fepelus.searchzen.commandline;
 
 import org.apache.commons.cli.*;
 
-import java.io.*;
+import java.io.PrintWriter;
+import java.io.StringWriter;
 
 
 public class CommandLine {

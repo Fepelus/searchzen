@@ -1,6 +1,5 @@
 package com.fepelus.searchzen.storage;
 
-import com.fepelus.searchzen.contracts.Users;
 import com.google.common.io.Resources;
 import org.junit.jupiter.api.Test;
 
@@ -15,18 +14,18 @@ import static org.junit.jupiter.api.Assertions.*;
 class TestUsers {
     @Test
     void shouldProvideUsers() throws JsonParsingException {
-        Users provider = new JsonUsers("[]");
+        Users provider = new Users("[]");
         assertEquals(0, provider.getAll().size());
     }
     @Test
     void shouldParseOneUser() throws JsonParsingException {
-        Users provider = new JsonUsers(oneUserJson);
+        Users provider = new Users(oneUserJson);
         assertEquals(1, provider.getAll().size());
     }
 
     @Test
     void shouldAcceptInputStream() throws JsonParsingException {
-        Users provider = new JsonUsers(new ByteArrayInputStream(oneUserJson.getBytes(StandardCharsets.UTF_8)));
+        Users provider = new Users(new ByteArrayInputStream(oneUserJson.getBytes(StandardCharsets.UTF_8)));
         assertEquals(1, provider.getAll().size());
     }
 
@@ -36,7 +35,7 @@ class TestUsers {
         InputStream stream = Resources.getResource("users.json").openStream();
 
         // When the json is parsed in the constructor
-        Users provider = new JsonUsers(stream);
+        Users provider = new Users(stream);
 
         // Then the number of users parsed from the stream matches expectation
         assertEquals(75, provider.getAll().size());
@@ -46,7 +45,7 @@ class TestUsers {
     @Test
     void shouldRetrieveUserById() throws JsonParsingException {
         // Given a list of one user
-        Users provider = new JsonUsers(oneUserJson);
+        Users provider = new Users(oneUserJson);
 
         // When I get the user by her ID
         Optional<User> optionalUser = provider.getById(1);
@@ -61,7 +60,7 @@ class TestUsers {
     @Test
     void shouldNotRetrieveIfIdIsNotPresent() throws JsonParsingException {
         // Given a list of one user
-        Users provider = new JsonUsers(oneUserJson);
+        Users provider = new Users(oneUserJson);
 
         // When I query by an ID that is not in the data
         Optional<User> optionalUser = provider.getById(100);
@@ -75,7 +74,7 @@ class TestUsers {
     void shouldRetrieveADifferentUser() throws IOException, JsonParsingException {
         // Given 75 different users
         InputStream stream = Resources.getResource("users.json").openStream();
-        Users provider = new JsonUsers(stream);
+        Users provider = new Users(stream);
 
         // When I select user with ID 2
         Optional<User> user = provider.getById(2);
@@ -89,12 +88,12 @@ class TestUsers {
 
     @Test
     void shouldThrowIfCannotParseJson() {
-        assertThrows(JsonParsingException.class, () -> new JsonUsers("[{bunch: 'of nonsense'}]"));
+        assertThrows(JsonParsingException.class, () -> new Users("[{bunch: 'of nonsense'}]"));
     }
 
     @Test
     void shouldThrowIfIdIsMissing() {
-        assertThrows(JsonParsingException.class, () -> new JsonUsers("[\n" +
+        assertThrows(JsonParsingException.class, () -> new Users("[\n" +
                 "  {\n" +
                 "" +   // _id is missing
                 "    \"url\": \"http://initech.zendesk.com/api/v2/users/1.json\",\n" +

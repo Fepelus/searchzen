@@ -21,7 +21,17 @@ dependencies {
     compile group: 'com.fasterxml.jackson.module', name: 'jackson-module-parameter-names', version: '2.9.6'
     compile group: 'com.google.guava', name: 'guava', version: '26.0-jre'
     compile group: 'commons-cli', name: 'commons-cli', version: '1.4'
-    testCompile group: 'org.junit.jupiter', name: 'junit-jupiter-api', version: '5.2.0'
+
+    testImplementation(
+        'org.junit.jupiter:junit-jupiter-api:5.2.0'
+    )
+    testRuntimeOnly(
+        'org.junit.jupiter:junit-jupiter-engine:5.2.0'
+    )
+}
+
+test {
+    useJUnitPlatform()
 }
 
 intellij {
@@ -32,7 +42,7 @@ compileJava {
     options.compilerArgs << '-parameters'
 }
 
-task copyTarToDistribution(type: Copy, dependsOn: 'assembleDist') {
+task distribution(type: Copy, dependsOn: 'assembleDist') {
     from file('build/distributions/searchzen.tar')
     from file('build/distributions/searchzen.zip')
     into "distribution"

@@ -3,10 +3,10 @@ package com.fepelus.searchzen.format;
 
 import com.fepelus.searchzen.storage.Organization;
 
-public class FormattedOrganisation {
+class FormattedOrganisation {
     private Organization org;
 
-    public FormattedOrganisation(Organization org) {
+    FormattedOrganisation(Organization org) {
         this.org = org;
     }
 
@@ -24,7 +24,7 @@ public class FormattedOrganisation {
         "tags: " + org.getTags() + "\n";
     }
 
-    public String compact() {
+    String compact() {
         return "_id:"  + org.getId() + " url:" + org.getUrl() + " external_id:" + org.getExternalId() +
                 " name:" + org.getName() + " created_at:" + org.getCreatedAt() + " details:" + org.getDetails() +
                  "shared_tickets:" + org.getSharedTickets() + "domain_names:" + org.getDomainNames() +

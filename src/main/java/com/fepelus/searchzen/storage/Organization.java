@@ -2,8 +2,6 @@ package com.fepelus.searchzen.storage;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import com.fepelus.searchzen.contracts.SearchQuery;
-import org.apache.commons.collections.OrderedMap;
 
 import java.util.*;
 import java.util.stream.Collectors;
@@ -24,7 +22,7 @@ public class Organization {
 
 
     @JsonCreator()
-    public Organization(@JsonProperty(value = "_id", required = true) long id, String url, String external_id,
+    Organization(@JsonProperty(value = "_id", required = true) long id, String url, String external_id,
                         String name, Set<String> domain_names, String created_at, String details,
                         String shared_tickets, Set<String> tags) {
         this.id = id;
@@ -45,7 +43,7 @@ public class Organization {
         allSetAttributes.put("tags", tags);
     }
 
-    public boolean matches(SearchQuery query) {
+    boolean matches(SearchQuery query) {
         if (!lookupValues.contains(query.searchTerm())) {
             return false;
         }
@@ -58,6 +56,10 @@ public class Organization {
 
         // but it may not match the attribute that we now know is specified
 
+        return matchesByAttribute(query);
+    }
+
+    private boolean matchesByAttribute(SearchQuery query) {
         return query.limitToAttributes().stream()
                 .anyMatch(attribute -> {
                     String stringValue = allStringAttributes.get(attribute);
@@ -68,11 +70,6 @@ public class Organization {
                     Set<String> setValues = allSetAttributes.get(attribute);
                     return (setValues != null && setValues.contains(query.searchTerm()));
                 });
-    }
-
-    public String toString() {
-        return allStringAttributes.keySet().stream().map(key -> key + ": " + allStringAttributes.get(key)).collect(Collectors.joining("\n")) + "\n" +
-                allSetAttributes.keySet().stream().map(key -> key + ": " + allSetAttributes.get(key).toString()).collect(Collectors.joining("\n"));
     }
 
     public long getId() {

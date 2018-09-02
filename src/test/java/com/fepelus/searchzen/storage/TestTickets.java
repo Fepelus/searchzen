@@ -1,6 +1,5 @@
 package com.fepelus.searchzen.storage;
 
-import com.fepelus.searchzen.contracts.Tickets;
 import com.google.common.io.Resources;
 import org.junit.jupiter.api.Test;
 
@@ -14,25 +13,25 @@ import static org.junit.jupiter.api.Assertions.*;
 class TestTickets {
     @Test
     void shouldProvideTickets() throws JsonParsingException {
-        Tickets provider = new JsonTickets("[]");
+        Tickets provider = new Tickets("[]");
         assertEquals(0, provider.getAll().size());
     }
     @Test
     void shouldParseOneTicket() throws JsonParsingException {
-        Tickets provider = new JsonTickets(oneTicketJson);
+        Tickets provider = new Tickets(oneTicketJson);
         assertEquals(1, provider.getAll().size());
     }
 
     @Test
     void shouldAcceptInputStream() throws IOException, JsonParsingException {
-        Tickets provider = new JsonTickets(new ByteArrayInputStream(oneTicketJson.getBytes("UTF-8")));
+        Tickets provider = new Tickets(new ByteArrayInputStream(oneTicketJson.getBytes("UTF-8")));
         assertEquals(1, provider.getAll().size());
     }
 
     @Test
     void shouldAcceptStreamOfResourceFile() throws JsonParsingException, IOException {
         InputStream stream = Resources.getResource("tickets.json").openStream();
-        Tickets provider = new JsonTickets(stream);
+        Tickets provider = new Tickets(stream);
         assertEquals(200, provider.getAll().size());
     }
 
@@ -40,7 +39,7 @@ class TestTickets {
     @Test
     void shouldRetrieveTicketById() throws JsonParsingException {
         // Given a list of one ticket
-        Tickets provider = new JsonTickets(oneTicketJson);
+        Tickets provider = new Tickets(oneTicketJson);
 
         // When I get the ticket by its ID
         Optional<Ticket> optionalTicket = provider.getById("436bf9b0-1147-4c0a-8439-6f79833bff5b");
@@ -55,7 +54,7 @@ class TestTickets {
     @Test
     void shouldNotRetrieveIfIdIsNotPresent() throws JsonParsingException {
         // Given a list of one ticket
-        Tickets provider = new JsonTickets(oneTicketJson);
+        Tickets provider = new Tickets(oneTicketJson);
 
         // When I query by an ID that is not in the data
         Optional<Ticket> optionalTicket = provider.getById("id-not-in-json-resource");
@@ -69,7 +68,7 @@ class TestTickets {
     void shouldRetrieveADifferentTicket() throws JsonParsingException, IOException {
         // Given 200 different tickets
         InputStream stream = Resources.getResource("tickets.json").openStream();
-        Tickets provider = new JsonTickets(stream);
+        Tickets provider = new Tickets(stream);
 
         // When I select ticket with a known ID
         Optional<Ticket> ticket = provider.getById("1a227508-9f39-427c-8f57-1b72f3fab87c");

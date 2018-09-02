@@ -1,13 +1,12 @@
 package com.fepelus.searchzen.format;
 
-import com.fepelus.searchzen.contracts.Storage;
 import com.fepelus.searchzen.storage.User;
 
 class FormattedUser {
     private final User user;
     private Storage storage;
 
-    public FormattedUser(User user, Storage storage) {
+    FormattedUser(User user, Storage storage) {
         this.user = user;
         this.storage = storage;
     }
@@ -37,7 +36,7 @@ class FormattedUser {
             "tags: " + user.getTags() + "\n";
     }
 
-    public String compact() {
+    String compact() {
         return "_id:" + user.getId() +
                 " url:" + user.getUrl() +
                 " external_id:" + user.getExternalId() +

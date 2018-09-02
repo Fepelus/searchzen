@@ -2,7 +2,6 @@ package com.fepelus.searchzen.storage;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import com.fepelus.searchzen.contracts.SearchQuery;
 
 import java.util.*;
 
@@ -20,7 +19,7 @@ public class User {
     private Map<String, Set<String>> allSetAttributes = new HashMap<>();
 
     @JsonCreator()
-    public User(@JsonProperty(value = "_id", required = true) long id, String url, String external_id, String name,
+    User(@JsonProperty(value = "_id", required = true) long id, String url, String external_id, String name,
                 String alias, String created_at, String active, String verified, String shared, String locale,
                 String timezone, String last_login_at, String email, String phone, String signature,
                 long organization_id, Set<String> tags, String suspended, String role) {
@@ -56,7 +55,7 @@ public class User {
     }
 
 
-    public boolean matches(SearchQuery query) {
+    boolean matches(SearchQuery query) {
         if (!lookupValues.contains(query.searchTerm())) {
             return false;
         }
@@ -69,6 +68,10 @@ public class User {
 
         // but it may not match the attribute that we now know is specified
 
+        return matchesByAttribute(query);
+    }
+
+    private boolean matchesByAttribute(SearchQuery query) {
         return query.limitToAttributes().stream()
                 .anyMatch(attribute -> {
                     String stringValue = allStringAttributes.get(attribute);
